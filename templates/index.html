@@ -1,0 +1,37 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>iLO Status Check</title>
+    <!-- 导入BS4的CSS文件 -->
+    <link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!-- 导入DataTable的CSS文件 -->
+    <link type="text/css" rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+    <!-- 导入DataTable的js文件 -->
+    <script src="{% static 'js/jquery-3.6.3.min.js'%}"></script>
+    <script src="{% static 'js/bootstrap.min.js'%}"></script>
+    <script src="{% static 'js/datatables.min.js'%}"></script>
+
+</head>
+<body>
+    <div class="container p-md-auto my-md-auto bg-primary text-white" style="" >
+        <div class="page-header">
+            <h1>iLO Health Check</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-2">
+            <label for="server">Server Name:</label>
+            <input type="text" class="form-control" id="server" name="server">
+            </div>
+            <div class="col-md-2">
+            <button type="button" class="btn btn-success" id="Search">Search</button>
+            </div>
+        </div>
+    </div>
+    <div clas>
+
+    </div>
+</body>
+</html>
