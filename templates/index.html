@@ -16,22 +16,48 @@
 
 </head>
 <body>
-    <div class="container p-md-auto my-md-auto bg-primary text-white" style="" >
+    {% csrf_token %}
+    <div class="container p-md-auto my-md-auto bg-primary text-white" style="height: 250px" >
         <div class="page-header">
-            <h1>iLO Health Check</h1>
+            <h1 style="font-family: 'Bosch Sans Global Black'; text-align: center">iLO Health Check</h1>
         </div>
         <div class="row">
-            <div class="col-md-2">
-            <label for="server">Server Name:</label>
-            <input type="text" class="form-control" id="server" name="server">
-            </div>
-            <div class="col-md-2">
-            <button type="button" class="btn btn-success" id="Search">Search</button>
+            <div class="col-md-3" style="text-align: center">
+                <label for="server">Server Name:</label>
+                <input type="text" class="form-control" id="server" name="server">
             </div>
         </div>
+        <br>
+            <div class="row" >
+                <button type="button" class="btn btn-success" id="Search" >Search</button>
+            </div>
     </div>
-    <div clas>
 
-    </div>
+<script>
+$(document).ready(function() {
+    // 给id为Search的按钮添加点击事件
+    $("#Search").click(function() {
+        // 获取id为server的输入框的值
+        var serverName = $("#server").val();
+
+        // 发送Ajax请求到test视图函数
+        $.ajax({
+            url: "{% url 'test' %}",
+            type: "POST",
+            data: {
+                'server_name': serverName,
+                csrfmiddlewaretoken: '{{ csrf_token }}'
+            },
+            success: function(response) {
+                console.log(response);
+            },
+            error: function(xhr) {
+                console.log(xhr.responseText);
+            }
+        });
+    });
+});
+</script>
+
 </body>
 </html>
