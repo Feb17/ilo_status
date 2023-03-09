@@ -6,53 +6,84 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>iLO Status Check</title>
     <!-- 导入BS4的CSS文件 -->
-    <link type="text/css" rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <!-- 导入DataTable的CSS文件 -->
+    <!-- 导入DataTable的CSS文件
     <link type="text/css" rel="stylesheet" href="{% static 'css/datatables.min.css' %}">
+    <script src="{% static 'js/datatables.min.js'%}"></script>
+    -->
     <!-- 导入DataTable的js文件 -->
     <script src="{% static 'js/jquery-3.6.3.min.js'%}"></script>
-    <script src="{% static 'js/bootstrap.min.js'%}"></script>
-    <script src="{% static 'js/datatables.min.js'%}"></script>
+
 
 </head>
 <body>
-    {% csrf_token %}
-    <div class="container p-md-auto my-md-auto bg-primary text-white" style="height: 250px" >
-        <div class="page-header">
-            <h1 style="font-family: 'Bosch Sans Global Black'; text-align: center">iLO Health Check</h1>
-        </div>
-        <div class="row">
-            <div class="col-md-3" style="text-align: center">
-                <label for="server">Server Name:</label>
-                <input type="text" class="form-control" id="server" name="server">
-            </div>
-        </div>
-        <br>
-            <div class="row" >
-                <button type="button" class="btn btn-success" id="Search" >Search</button>
-            </div>
+{% csrf_token %}
+<div>
+    <div>
+        <h1 style="text-align: center">iLO Health Check</h1>
     </div>
+    <div>
+            <label>Server Name:</label>
+            <input type="text" id="server_ip" name="server_ip">
+    </div>
+
+    <br>
+    <div>
+        <button type="button" id="Search">Search</button>
+    </div>
+    <br>
+    <div>
+        <div>
+            <table id="dataTable">
+                <tr>
+                    <th>Server IP</th>
+                    <th>AgentlessManagementService</th>
+                    <th>BiosOrHardwareHealth</th>
+                    <th>FanRedundancy</th>
+                    <th>Fans</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
 
 <script>
 $(document).ready(function() {
     // 给id为Search的按钮添加点击事件
-    $("#Search").click(function() {
+    $("#Search").on('click', function (){
         // 获取id为server的输入框的值
-        var serverName = $("#server").val();
+        var server_ip = $("#server_ip").val();
 
         // 发送Ajax请求到test视图函数
         $.ajax({
             url: "{% url 'test' %}",
             type: "POST",
+            dataType: 'json',
             data: {
-                'server_name': serverName,
+                'server_ip': server_ip,
                 csrfmiddlewaretoken: '{{ csrf_token }}'
             },
-            success: function(response) {
-                console.log(response);
+            success: function (response) {
+                if (response.status) {
+                    let hostStatusData = response.data;
+                    let tr = $('#dataTable').append('<tr></tr>');
+                    tr.append(server_ip);
+                    for (let key in hostStatusData) {
+                        let item = hostStatusData[key];
+                        if ((key == 'AgentlessManagementService') || (key == 'FanRedundancy')) {
+                            tr.append('<td>' + item + '</td>');
+                        } else if (key == 'BiosOrHardwareHealth') {
+                            tr.append('<td> Health is' + item['Status']['Health'] + '</td>');
+                        } else if (key == 'Fans') {
+                            tr.append('<td> Health is' + item['Status']['Health'] + '</td>');
+                        }
+                    }
+
+                } else {
+                    alert(response.error);
+                }
             },
             error: function(xhr) {
-                console.log(xhr.responseText);
+                console.log('error...');
             }
         });
     });
